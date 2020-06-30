@@ -63,7 +63,8 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "id", dataType = "int", required = true, value = "用户ID"),
     })
     public Object getUserById(@RequestBody User user){
-        log.info("/getUserById，参数为",user.toString());
+        System.err.println(user.toString());
+        log.info("/getUserById，参数为{}",user.toString());
         User u = userService.getUserById(user);
         return R.genSuccessResult(u);
     }
@@ -81,7 +82,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "int", required = true, value = "页容量")
     })
     public Object getUserList(@RequestBody User user){
-        log.info("/getUserList，参数为",user.toString());
+        log.info("/getUserList，参数为{}",user.toString());
         //分页查询
         Page<User> userPage = new Page<User>(user.getCurrent(), user.getPageSize());
         //按ID正序排列
@@ -109,7 +110,7 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "userName", dataType = "String", required = false, value = "用户名")
     })
     public Object getUserListByUserName(@RequestBody User user){
-        log.info("/getUserListByUserName，参数为",user.toString());
+        log.info("/getUserListByUserName，参数为{}",user.toString());
         //分页查询
         Page<User> userPage = new Page<User>(user.getCurrent(), user.getPageSize());
         //按ID正序排列
