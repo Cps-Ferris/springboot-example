@@ -21,8 +21,6 @@ import java.io.IOException;
 
 /**
  * 文件管理
- * 开发环境下，无法访问到上传的图片，是因为开发环境使用的虚拟化路径
- * 需要打包发布再去访问；或者将虚拟路径配置为物理路径；或者配置IDEA的tomcat 使用本地的tomcat
  */
 @Api(tags = "文件管理")
 @RestController

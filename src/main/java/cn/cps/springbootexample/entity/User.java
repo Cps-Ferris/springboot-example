@@ -18,7 +18,7 @@ import java.util.Date;
  * @author _Cps
  * @create 2019-02-14 10:12
  * @Description: 用户实体类  实战中会使用不同的实体类；
- * DTO数据传输对象(前端到后台) VO值对象(后台到前端) PO持久对象(跟数据库字段一一对应)
+ * DTO数据传输对象(前端到后台)  VO值对象(后台到前端)  PO持久对象(跟数据库字段一一对应)
 
  * Jackson提供了一系列注解，方便对JSON序列化和反序列化进行控制，下面介绍一些常用的注解。
  * @JsonIgnore 此注解用于属性上，作用是进行JSON操作时忽略该属性。
@@ -66,7 +66,7 @@ public class User implements Serializable{
     private Date updateTime;
 
 
-    //分页条件
+    //分页条件(实战中，会存在DTO实体类中)
 
     //@TableField(exist = false) Mybatis-Plus 注解即可忽略掉字段映射
     @TableField(exist = false)
@@ -79,7 +79,7 @@ public class User implements Serializable{
     private Integer pageSize;
 
 
-    //扩展属性
+    //扩展属性(实战中会使用存在VO实体类中)
     //@TableField(exist = false) Mybatis-Plus 注解即可忽略掉字段映射
     @TableField(exist = false)
     @ApiModelProperty(value = "性别(男/女)")

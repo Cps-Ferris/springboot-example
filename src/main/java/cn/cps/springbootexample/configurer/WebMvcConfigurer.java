@@ -61,10 +61,12 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         return paginationInterceptor;
     }
 
-    //过滤静态资源文件
+    //静态资源映射
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //上传的静态资源
+        //配置获取静态文件的路径
+        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        //给上传的静态资源配置映射(可以与上方 写在一起，分开更好理解)
         registry.addResourceHandler("/static/**").addResourceLocations(upLoadPath);
         //swagger的API文档需要用的资源
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
