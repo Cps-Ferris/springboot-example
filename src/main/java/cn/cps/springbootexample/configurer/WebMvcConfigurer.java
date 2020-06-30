@@ -46,6 +46,13 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
     private String upLoadPath;
 
 
+    //Mybaits-Plus分页插件
+    @Bean
+    public PaginationInterceptor paginationInterceptor() {
+        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
+        return paginationInterceptor;
+    }
+
     //设置默认访问路径
     @Override
     public void addViewControllers(ViewControllerRegistry reg) {
@@ -54,11 +61,19 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
 //        super.addViewControllers(reg);
     }
 
-    //分页插件
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        return paginationInterceptor;
+    //解决跨域问题
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        //设置允许跨域的路径
+        registry.addMapping("/**")
+                //设置允许跨域请求的域名
+                .allowedOrigins("*")
+                //是否发送cookie
+                .allowCredentials(true)
+                //设置允许的方法
+                .allowedMethods("*")
+                //跨域允许时间
+                .maxAge(3600);
     }
 
     //静态资源映射
@@ -151,20 +166,6 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         }
     }
 
-    //解决跨域问题
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        //设置允许跨域的路径
-        registry.addMapping("/**")
-                //设置允许跨域请求的域名
-                .allowedOrigins("*")
-                //是否允许证书 不再默认开启
-                .allowCredentials(true)
-                //设置允许的方法
-                .allowedMethods("*")
-                //跨域允许时间
-                .maxAge(3600);
-    }
 
 
     //Ip查询
