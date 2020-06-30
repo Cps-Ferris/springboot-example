@@ -63,7 +63,6 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "id", dataType = "int", required = true, value = "用户ID"),
     })
     public Object getUserById(@RequestBody User user){
-        System.err.println(user.toString());
         log.info("/getUserById，参数为{}",user.toString());
         User u = userService.getUserById(user);
         return R.genSuccessResult(u);
