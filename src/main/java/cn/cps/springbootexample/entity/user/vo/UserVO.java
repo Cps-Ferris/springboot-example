@@ -1,4 +1,4 @@
-package cn.cps.springbootexample.entity.user;
+package cn.cps.springbootexample.entity.user.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -17,29 +17,16 @@ import java.util.Date;
 /**
  * @author _Cps
  * @create 2019-02-14 10:12
- * @Description: 用户PO持久实体类(跟数据库字段一一对应)
+ * @Description: 用户VO实体类(后台到前端)
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
-public class User implements Serializable{
+public class UserVO implements Serializable{
 
-    //Mybatis-Plus主键类型
-    @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer roleId;
-
-    //Mybatis-Plus属性与字段自定义映射
-    @TableField("username")
     private String userName;
-
-    private String password;
-
-    private Integer gender;
-
-    private Integer isDisable;
 
     private Integer isDelete;
 
@@ -47,18 +34,24 @@ public class User implements Serializable{
 
     private Date updateTime;
 
+    private Integer roleId;
+    private String roleName;
+
+    private Integer gender;
+    private String genderName;
+
     @Override
     public String toString() {
-        return "User{" +
+        return "RoleVO{" +
                 "id=" + id +
-                ", roleId=" + roleId +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", gender=" + gender +
-                ", isDisable=" + isDisable +
                 ", isDelete=" + isDelete +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", roleId=" + roleId +
+                ", roleName='" + roleName + '\'' +
+                ", gender=" + gender +
+                ", genderName='" + genderName + '\'' +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package cn.cps.springbootexample.dao;
 
 import cn.cps.springbootexample.entity.user.User;
+import cn.cps.springbootexample.entity.user.to.UserTO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -11,6 +12,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    Page<User> getUserList(Page<User> userPage, User user);
+    Page<User> getUserList(Page<User> userPage, UserTO userTO);
 
 }

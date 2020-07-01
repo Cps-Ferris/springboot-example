@@ -1,6 +1,8 @@
 package cn.cps.springbootexample.service;
 
 import cn.cps.springbootexample.entity.user.User;
+import cn.cps.springbootexample.entity.user.to.UserTO;
+import cn.cps.springbootexample.entity.user.vo.UserVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**
@@ -10,10 +12,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface UserService{
 
-    User getUserById(User user);
+    UserVO getUserById(UserTO userDTO);
 
-    void getUserListByUserName(Page<User> userPage, User userDTO);
+    Page<UserVO> getUserList(Page<User> userPage, UserTO userDTO);
 
-    void getUserList(Page<User> userPage, User userDTO);
+    Page<UserVO> getUserListByUserName(Page<User> userPage, UserTO userDTO);
+
 
 }

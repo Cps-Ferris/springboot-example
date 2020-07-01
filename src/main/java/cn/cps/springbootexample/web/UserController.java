@@ -2,6 +2,8 @@ package cn.cps.springbootexample.web;
 
 import cn.cps.springbootexample.core.R;
 import cn.cps.springbootexample.entity.user.User;
+import cn.cps.springbootexample.entity.user.to.UserTO;
+import cn.cps.springbootexample.entity.user.vo.UserVO;
 import cn.cps.springbootexample.service.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -12,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @Author: Cai Peishen
@@ -22,33 +23,12 @@ import java.util.List;
 @Slf4j
 @Api(tags="用户接口API")
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/userTO")
 public class UserController {
 
     @Resource
     private UserService userService;
 
-    //实战中 会有专门存放常量、枚举类型的类
-    public enum GenderCode{
-
-        WO_MAN(0,"女"),//女
-        MAN(1,"男");//男
-
-        int code;
-        String value;
-
-        GenderCode(int code,String value){
-            this.code = code;
-            this.value = value;
-        }
-
-        public int getCode(){
-            return this.code;
-        }
-        public String getValue(){
-            return this.value;
-        }
-    }
 
 
     @PostMapping("/getUserById")
@@ -56,16 +36,16 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "id", dataType = "int", required = true, value = "用户ID"),
     })
-    public Object getUserById(@RequestBody User user){
-        log.info("/getUserById，参数为{}",user.toString());
-        User u = userService.getUserById(user);
-        return R.genSuccessResult(u);
+    public Object getUserById(@RequestBody UserTO userTO){
+        log.info("/getUserById，参数为{}",userTO.toString());
+        UserVO userVO = userService.getUserById(userTO);
+        return R.genSuccessResult(userVO);
     }
 
     /**
      * 查询用户集合
      * 使用Mybatis-Plus分页 自定义SQL
-     * @param user
+     * @param userTO
      * @return
      */
     @PostMapping("/getUserList")
@@ -74,16 +54,14 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "current", dataType = "int", required = true, value = "当前页"),
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "int", required = true, value = "页容量")
     })
-    public Object getUserList(@RequestBody User user){
-        log.info("/getUserList，参数为{}",user.toString());
+    public Object getUserList(@RequestBody UserTO userTO){
+        log.info("/getUserList，参数为{}",userTO.toString());
         //分页查询
-        Page<User> userPage = new Page<User>(user.getCurrent(), user.getPageSize());
+        Page<User> userPage = new Page<User>(userTO.getCurrent(), userTO.getPageSize());
         //按ID正序排列
         userPage.setAsc("id");
         //查询过的数据会封装在userPage中
-        userService.getUserList(userPage, user);
-        //更新用户的性别(中文)
-        setGenderName(userPage.getRecords());
+        Page<UserVO> userVOPage = userService.getUserList(userPage, userTO);
         //返回数据
         return R.genSuccessResult(userPage);
     }
@@ -92,7 +70,7 @@ public class UserController {
     /**
      * 根据姓名查询用户集合
      * 使用Mybatis-Plus带条件 分页查询
-     * @param user
+     * @param userTO
      * @return
      */
     @PostMapping("/getUserListByUserName")
@@ -102,35 +80,18 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "int", required = true, value = "页容量"),
             @ApiImplicitParam(paramType = "query", name = "userName", dataType = "String", required = false, value = "用户名")
     })
-    public Object getUserListByUserName(@RequestBody User user){
-        log.info("/getUserListByUserName，参数为{}",user.toString());
+    public Object getUserListByUserName(@RequestBody UserTO userTO){
+        log.info("/getUserListByUserName，参数为{}",userTO.toString());
         //分页查询
-        Page<User> userPage = new Page<User>(user.getCurrent(), user.getPageSize());
+        Page<User> userPage = new Page<User>(userTO.getCurrent(), userTO.getPageSize());
         //按ID正序排列
         userPage.setAsc("id");
         //查询过的数据会封装在userPage中
-        userService.getUserListByUserName(userPage, user);
-        //更新用户的性别(中文)
-        setGenderName(userPage.getRecords());
+        userService.getUserListByUserName(userPage, userTO);
         //返回数据
         return R.genSuccessResult(userPage);
     }
 
 
-    /**
-     * 设置性别(中文)
-     * @param userList
-     */
-    public void setGenderName(List<User> userList){
-        for(User vo : userList){
-            if(vo.getGender()== GenderCode.WO_MAN.getCode()){
-                vo.setGenderName(GenderCode.WO_MAN.getValue());
-            }else if(vo.getGender()==GenderCode.MAN.getCode()){
-                vo.setGenderName(GenderCode.MAN.getValue());
-            }else{
-                vo.setGenderName("其他");
-            }
-        }
-    }
 
 }
