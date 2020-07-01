@@ -1,10 +1,8 @@
 package cn.cps.springbootexample.dao;
 
-import cn.cps.springbootexample.entity.User;
+import cn.cps.springbootexample.entity.user.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @Author: Cai Peishen

@@ -1,7 +1,6 @@
 package cn.cps.springbootexample.service;
 
-import cn.cps.springbootexample.entity.User;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import cn.cps.springbootexample.entity.user.User;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 /**

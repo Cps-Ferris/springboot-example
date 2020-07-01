@@ -1,10 +1,8 @@
 package cn.cps.springbootexample.web;
 
 import cn.cps.springbootexample.core.R;
-import cn.cps.springbootexample.entity.User;
+import cn.cps.springbootexample.entity.user.User;
 import cn.cps.springbootexample.service.UserService;
-import cn.cps.springbootexample.service.impl.UserServiceImpl;
-import cn.cps.springbootexample.utils.VerifyCodeUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,10 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 /**

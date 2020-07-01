@@ -4,13 +4,19 @@ import cn.cps.springbootexample.core.Result;
 import cn.cps.springbootexample.core.ResultCode;
 import cn.cps.springbootexample.core.ServiceException;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,7 +34,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Spring MVC 配置
@@ -53,13 +61,6 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         return paginationInterceptor;
     }
 
-    //设置默认访问路径
-    @Override
-    public void addViewControllers(ViewControllerRegistry reg) {
-//        reg.addViewController("/").setViewName("login");//默认访问页面
-//        reg.setOrder(Ordered.HIGHEST_PRECEDENCE);//最先执行过滤
-//        super.addViewControllers(reg);
-    }
 
     //解决跨域问题
     @Override
@@ -75,6 +76,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                 //跨域允许时间
                 .maxAge(3600);
     }
+
 
     //静态资源映射
     @Override
@@ -105,6 +107,8 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
 //				.globalOperationParameters(setHeaderToken());
     }
 
+
+    /** http://IP地址:端口号/项目名/swagger-ui.html **/
     //api文档的详细信息函数,注意这里的注解引用的是哪个
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
@@ -116,6 +120,18 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                 // 描述
                 .description("restful 风格接口")
                 .build();
+    }
+
+    //响应数据格式
+    private void responseResult(HttpServletResponse response, Result result) {
+        response.setCharacterEncoding("UTF-8");
+        response.setHeader("Content-type", "application/json;charset=UTF-8");
+        response.setStatus(200);
+        try {
+            response.getWriter().write(objectMapper.writeValueAsString(result));
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+        }
     }
 
 
@@ -154,21 +170,32 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         });
     }
 
-    //返回数据
-    private void responseResult(HttpServletResponse response, Result result) {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setStatus(200);
-        try {
-            response.getWriter().write(objectMapper.writeValueAsString(result));
-        } catch (IOException ex) {
-            logger.error(ex.getMessage());
-        }
+
+    /**
+     * 使用此方法, 以下 spring-boot: jackson时间格式化 配置 将会失效
+     * spring.jackson.time-zone=GMT+8
+     * spring.jackson.date-format=yyyy-MM-dd HH:mm:ss
+     * 原因: 会覆盖 @EnableAutoConfiguration 关于 WebMvcAutoConfiguration 的配置
+     * */
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        // 生成JSON时,将所有Long转换成String
+        SimpleModule simpleModule = new SimpleModule();
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        objectMapper.registerModule(simpleModule);
+        // 时间格式化
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+        // 设置格式化内容
+        converter.setObjectMapper(objectMapper);
+        converters.add(0, converter);
     }
 
 
-
-    //Ip查询
+    //获取Ip
     private String getIpAddress(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {

@@ -30,8 +30,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <!--MySql JDBC驱动-->
-        <!--mysql6以及以上是com.mysql.cj.jdbc.Driver 并且在url之后要指定时区-->
-        <!--如果你的配置数据库文件是 com.mysql.jdbc.Driver 这个jar包版本换成5.1.8的-->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
