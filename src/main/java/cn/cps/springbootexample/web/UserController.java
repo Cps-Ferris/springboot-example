@@ -1,6 +1,7 @@
 package cn.cps.springbootexample.web;
 
 import cn.cps.springbootexample.core.R;
+import cn.cps.springbootexample.core.ResultCode;
 import cn.cps.springbootexample.entity.user.to.UserLoginTO;
 import cn.cps.springbootexample.entity.user.to.UserInfoTO;
 import cn.cps.springbootexample.entity.user.vo.UserInfoVO;
@@ -15,11 +16,15 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Cai Peishen
@@ -29,12 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Api(tags="用户接口API")
 @RestController
-@RequestMapping("/userTO")
+@RequestMapping("/user")
 public class UserController {
 
     @Resource
     private UserService userService;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/getUserById")
     @ApiOperation(value="根据ID查询用户信息 - BaseMapper自带方法")
@@ -44,7 +51,7 @@ public class UserController {
     public Object getUserById(@RequestBody UserInfoTO userInfoTO){
         log.info("/getUserById，参数为{}", userInfoTO.toString());
         if(userInfoTO == null || userInfoTO.getId() == null){
-            return R.genFailResult("请输入完整参数!");
+            return R.genFailResult("请输入完整参数...");
         };
         UserInfoVO userInfoVO = userService.getUserById(userInfoTO);
         return R.genSuccessResult(userInfoVO);
@@ -67,7 +74,7 @@ public class UserController {
     public Object getUserList(@RequestBody UserInfoTO userInfoTO){
         log.info("/getUserList，参数为{}", userInfoTO.toString());
         if(userInfoTO == null || userInfoTO.getCurrent() == null || userInfoTO.getPageSize() == null){
-            return R.genFailResult("请输入完整参数!");
+            return R.genFailResult("请输入完整参数...");
         };
         IPage<UserInfoVO> userInfoVOIPage = userService.getUserList(userInfoTO);
         return R.genSuccessResult(userInfoVOIPage);
@@ -86,26 +93,33 @@ public class UserController {
             @ApiImplicitParam(paramType = "query", name = "username", required = true, value = "用户名"),
             @ApiImplicitParam(paramType = "query", name = "password", required = true, value = "用户密码")
     })
-    public Object userLogin(@RequestBody UserLoginTO userLoginTO, HttpServletRequest request) throws JsonProcessingException {
+    public Object userLogin(@RequestBody UserLoginTO userLoginTO) throws JsonProcessingException {
+        log.info("/userLogin，参数为{}", userLoginTO.toString());
+
         if(userLoginTO==null || userLoginTO.getPassword() == null || userLoginTO.getUsername() == null || "".equals(userLoginTO.getPassword()) || "".equals(userLoginTO.getUsername()) ){
-            return R.genFailResult("请输入完整参数!");
+            return R.genFailResult("请输入完整参数...");
         }
-        request.getSession().setAttribute("","");
+
         UserInfoVO userInfoVO = userService.userLogin(userLoginTO);
 
         if(userInfoVO==null){
-            return R.genFailResult("Token无效!");
+            return R.genFailResult("用户名或密码错误...");
         }
 
         //对数据进行加密 当作Token
         String token = TokenUtils.getToken(userInfoVO.getUsername());
+
+        log.info("token生成成功：{}",token);
 
         //jackson 处理成JSON格式 类似 FASTJSON
         ObjectMapper objectMapper = new ObjectMapper();
         String userInfoVOJson = objectMapper.writeValueAsString(userInfoVO);
 
         //token 暂时存在session中 后面会存在redis中
-        request.getSession().setAttribute(token,userInfoVOJson);
+        //request.getSession().setAttribute(token,userInfoVOJson);
+
+        //token 存在redis中 并设置有效时间
+        stringRedisTemplate.opsForValue().set(token,userInfoVOJson,30, TimeUnit.SECONDS);
 
         return R.genSuccessResult(token);
     }
@@ -118,16 +132,20 @@ public class UserController {
     @PostMapping("/getUserByToken")
     @ApiOperation(value="验证Token并返回用户信息")
     @ApiImplicitParam(paramType = "header", name = "token", required = true, value = "Token")
-    public Object userLogin(HttpServletRequest request){
+    public Object getUserByToken(HttpServletRequest request){
+        log.info("/getUserByToken，参数为{}", request.toString());
 
         //从请求头中获取token
         String token = request.getHeader("token");
 
         //根据token获取session中的JSON数据
-        String userInfoVOJson = (String) request.getSession().getAttribute(token);
+        //String userInfoVOJson = (String) request.getSession().getAttribute(token);
+
+        //token 存在redis中 并设置有效时间
+        String userInfoVOJson = stringRedisTemplate.opsForValue().get(token);
 
         if(StringUtils.isEmpty(userInfoVOJson)){
-            return R.genFailResult("Token无效!");
+            return R.genResult(ResultCode.UNAUTHORIZED,"Token无效...");
         }
 
         //解析JSON数据
@@ -136,7 +154,7 @@ public class UserController {
         try {
             userInfoVO = objectMapper.readValue(userInfoVOJson, UserInfoVO.class);
         } catch (JsonProcessingException e) {
-            R.genFailResult("Token无效!");
+            return R.genResult(ResultCode.UNAUTHORIZED,"Token无效...");
         }
 
         return R.genSuccessResult(userInfoVO);
