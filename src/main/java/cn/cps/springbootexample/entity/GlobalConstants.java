@@ -7,7 +7,21 @@ package cn.cps.springbootexample.entity;
  */
 public class GlobalConstants {
 
-	//性别映射
+	/** token前缀 */
+	public static final String TOKEN_PREFIX = "token_";
+
+	/** token截取开始下标 */
+	public static final int TOKEN_START = 0;
+
+	/** token截取偏移量 */
+	public static final int TOKEN_OFFSET = 16;
+
+	/** 冒号 **/
+	public static final String SYMBOL_COLON = ":";
+
+
+
+	/** 性别映射 **/
 	public enum GenderCode{
 
 		WO_MAN(0,"女"),//女

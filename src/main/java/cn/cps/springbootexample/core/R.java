@@ -5,6 +5,7 @@ package cn.cps.springbootexample.core;
  */
 public class R {
     private static final String DEFAULT_SUCCESS_MESSAGE = "SUCCESS";
+    private static final String DEFAULT_FAIL_MESSAGE = "FAIL";
 
     //成功
     public static Result genSuccessResult() {
@@ -18,12 +19,6 @@ public class R {
                 .setCode(ResultCode.SUCCESS)
                 .setMessage(message);
     }
-    //失败
-    public static Result genFailResult(String message) {
-        return new Result()
-                .setCode(ResultCode.FAIL)
-                .setMessage(message);
-    }
 
     //携带数据
     public static Result genSuccessResult(Object data) {
@@ -32,10 +27,25 @@ public class R {
                 .setMessage(DEFAULT_SUCCESS_MESSAGE)
                 .setData(data);
     }
+
+    //失败
+    public static Result genFailResult() {
+        return new Result()
+                .setCode(ResultCode.FAIL)
+                .setMessage(DEFAULT_FAIL_MESSAGE);
+    }
+    //失败
+    public static Result genFailResult(String message) {
+        return new Result()
+                .setCode(ResultCode.FAIL)
+                .setMessage(message);
+    }
+
     //自定义返回状态码
-    public static Result genFailResult(ResultCode resultCode, String message) {
+    public static Result genResult(ResultCode resultCode, String message) {
         return new Result()
                 .setCode(resultCode)
                 .setMessage(message);
     }
+
 }
