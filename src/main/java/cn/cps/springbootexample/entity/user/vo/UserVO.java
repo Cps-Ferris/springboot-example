@@ -1,12 +1,7 @@
 package cn.cps.springbootexample.entity.user.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import cn.cps.springbootexample.entity.role.Role;
+import cn.cps.springbootexample.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,36 +17,12 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserVO implements Serializable{
-
-    private Integer id;
-
-    private String userName;
-
-    private Integer isDelete;
-
-    private Date createTime;
-
-    private Date updateTime;
+public class UserVO extends User {
 
     private Integer roleId;
+
     private String roleName;
 
-    private Integer gender;
     private String genderName;
 
-    @Override
-    public String toString() {
-        return "RoleVO{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", isDelete=" + isDelete +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
-                ", gender=" + gender +
-                ", genderName='" + genderName + '\'' +
-                '}';
-    }
 }

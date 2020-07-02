@@ -23,23 +23,17 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("user")
-public class User implements Serializable{
+public class User implements Serializable {
 
     //Mybatis-Plus主键类型
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-    private Integer roleId;
-
-    //Mybatis-Plus属性与字段自定义映射
-    @TableField("username")
-    private String userName;
+    private String username;
 
     private String password;
 
     private Integer gender;
-
-    private Integer isDisable;
 
     private Integer isDelete;
 
@@ -47,18 +41,4 @@ public class User implements Serializable{
 
     private Date updateTime;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", roleId=" + roleId +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", gender=" + gender +
-                ", isDisable=" + isDisable +
-                ", isDelete=" + isDelete +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
-    }
 }

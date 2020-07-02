@@ -28,6 +28,8 @@ public class Role implements Serializable {
 
     private String roleName;
 
+    private Integer isDelete;
+
     private Date createTime;
 
     private Date updateTime;
@@ -37,6 +39,7 @@ public class Role implements Serializable {
         return "Role{" +
                 "id=" + id +
                 ", roleName='" + roleName + '\'' +
+                ", isDelete=" + isDelete +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

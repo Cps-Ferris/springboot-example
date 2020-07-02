@@ -7,9 +7,12 @@ import cn.cps.springbootexample.entity.user.to.UserTO;
 import cn.cps.springbootexample.entity.user.vo.UserVO;
 import cn.cps.springbootexample.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
@@ -28,35 +31,37 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO getUserById(UserTO userTO) {
+
+        //使用Mybatis-Plus自带方法
         User user = userMapper.selectById(userTO);
-        UserVO userVO = new UserVO();
+        //使用QueryWrapper定义查询条件
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
+//        queryWrapper.like("id", userTO.getId());
+//        User user = userMapper.selectOne(queryWrapper);
+
         //将user的数据复制一份到userVO中
+        UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user,userVO);
+
         //更新用户的性别(中文)
         setGenderName(Arrays.asList(userVO));
+
         return userVO;
     }
 
 
     @Override
-    public Page<UserVO> getUserList(Page<User> userPage, UserTO userDTO) {
-        userMapper.getUserList(userPage, userDTO);
-        Page<UserVO> userVOPage = new Page<>(userPage.getCurrent(),userPage.getSize());
-        BeanUtils.copyProperties(userPage,userVOPage);
-        return userVOPage;
+    public IPage<UserVO> getUserList(UserTO userTO) {
+        //组装分页信息
+        Page<UserVO> userVOPage = new Page<UserVO>(userTO.getCurrent(), userTO.getPageSize());
+        userVOPage.setAsc("id");
+        //调用查询方法
+        IPage<UserVO> userVOIPage = userMapper.getUserList(userVOPage,userTO);
+        //设置性别中文
+        setGenderName(userVOIPage.getRecords());
+        return userVOIPage;
     }
 
-
-    @Override
-    public Page<UserVO> getUserListByUserName(Page<User> userPage, UserTO userTO) {
-        //使用QueryWrapper定义查询条件
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
-        queryWrapper.like("username", userTO.getUserName());
-        userMapper.selectPage(userPage,queryWrapper);
-        Page<UserVO> userVOPage = new Page<>(userPage.getCurrent(),userPage.getSize());
-        BeanUtils.copyProperties(userPage,userVOPage);
-        return userVOPage;
-    }
 
 
     /**

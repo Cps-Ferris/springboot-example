@@ -1,10 +1,5 @@
 package cn.cps.springbootexample.entity.user.to;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -39,12 +34,12 @@ public class UserTO implements Serializable{
     private String roleId;
 
     @ApiModelProperty(value = "用户名")
-    private String userName;
+    private String username;
 
     @ApiModelProperty(value = "用户密码")
     private String password;
 
-    @ApiModelProperty(value = "性别(0/1)")
+    @ApiModelProperty(value = "用户性别")
     private Integer gender;
 
     @ApiModelProperty(value = "创建时间")
@@ -54,18 +49,4 @@ public class UserTO implements Serializable{
     private Date updateTime;
 
 
-    @Override
-    public String toString() {
-        return "UserTO{" +
-                "current=" + current +
-                ", pageSize=" + pageSize +
-                ", id=" + id +
-                ", roleId='" + roleId + '\'' +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", gender=" + gender +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
-    }
 }
