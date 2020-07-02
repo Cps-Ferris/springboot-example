@@ -1,5 +1,7 @@
 package cn.cps.springbootexample.web;
 
+import cn.cps.springbootexample.annotation.Token;
+import cn.cps.springbootexample.context.UserContext;
 import cn.cps.springbootexample.core.R;
 import cn.cps.springbootexample.core.ResultCode;
 import cn.cps.springbootexample.entity.user.to.UserLoginTO;
@@ -115,11 +117,11 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
         String userInfoVOJson = objectMapper.writeValueAsString(userInfoVO);
 
-        //token 暂时存在session中 后面会存在redis中
-        //request.getSession().setAttribute(token,userInfoVOJson);
+        //Token 暂时存在session中 后面会存在redis中
+        //request.getSession().setAttribute(Token,userInfoVOJson);
 
-        //token 存在redis中 并设置有效时间
-        stringRedisTemplate.opsForValue().set(token,userInfoVOJson,30, TimeUnit.SECONDS);
+        //Token 存在redis中 并设置有效时间
+        stringRedisTemplate.opsForValue().set(token,userInfoVOJson,60, TimeUnit.SECONDS);
 
         return R.genSuccessResult(token);
     }
@@ -129,35 +131,29 @@ public class UserController {
      * 验证Token并返回用户信息
      * @return
      */
+    @Token
     @PostMapping("/getUserByToken")
     @ApiOperation(value="验证Token并返回用户信息")
     @ApiImplicitParam(paramType = "header", name = "token", required = true, value = "Token")
-    public Object getUserByToken(HttpServletRequest request){
-        log.info("/getUserByToken，参数为{}", request.toString());
-
-        //从请求头中获取token
-        String token = request.getHeader("token");
-
-        //根据token获取session中的JSON数据
-        //String userInfoVOJson = (String) request.getSession().getAttribute(token);
-
-        //token 存在redis中 并设置有效时间
-        String userInfoVOJson = stringRedisTemplate.opsForValue().get(token);
-
-        if(StringUtils.isEmpty(userInfoVOJson)){
-            return R.genResult(ResultCode.UNAUTHORIZED,"Token无效...");
-        }
-
-        //解析JSON数据
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserInfoVO userInfoVO = null;
-        try {
-            userInfoVO = objectMapper.readValue(userInfoVOJson, UserInfoVO.class);
-        } catch (JsonProcessingException e) {
-            return R.genResult(ResultCode.UNAUTHORIZED,"Token无效...");
-        }
-
+    public Object getUserByToken(){
+        UserInfoVO userInfoVO = UserContext.getUserInfoVO();
         return R.genSuccessResult(userInfoVO);
     }
+
+
+
+    /**
+     * token校验失败跳转接口
+     * @param request
+     * @return
+     */
+    @ApiOperation(value="token校验失败跳转接口")
+    @PostMapping("/returnLogin")
+    public Object returnLogin(HttpServletRequest request) {
+        String token_error = (String) request.getAttribute("token_error");
+        log.error("tokenIptor校验失败跳转接口.{}",token_error);
+        return R.genFailResult(token_error);
+    }
+
 
 }

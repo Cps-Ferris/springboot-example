@@ -3,12 +3,14 @@ package cn.cps.springbootexample.configurer;
 import cn.cps.springbootexample.core.Result;
 import cn.cps.springbootexample.core.ResultCode;
 import cn.cps.springbootexample.core.ServiceException;
+import cn.cps.springbootexample.interceptor.TokenIptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiOperation;
+import org.omg.PortableInterceptor.Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +41,9 @@ import java.util.List;
 import java.util.TimeZone;
 
 /**
- * Spring MVC 配置
+ * @Author: Cai Peishen
+ * @Date: 2020/6/29 11:07
+ * @Description: Spring MVC 配置
  */
 @Configuration
 @EnableSwagger2
@@ -53,12 +57,25 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
     @Value("${web.upload-path}")
     private String upLoadPath;
 
+    //注入自己的Token拦截器
+    @Bean
+    TokenIptor tokenIptor() {
+        return new TokenIptor();
+    }
+
+    //配置上拦截器
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //引用上面注入的的拦截器
+        registry.addInterceptor(tokenIptor())
+                .addPathPatterns("/**");//.excludePathPatterns("/error/page/**");
+    }
+
 
     //Mybaits-Plus分页插件
     @Bean
     public PaginationInterceptor paginationInterceptor() {
-        PaginationInterceptor paginationInterceptor = new PaginationInterceptor();
-        return paginationInterceptor;
+        return new PaginationInterceptor();
     }
 
 
