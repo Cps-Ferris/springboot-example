@@ -1,7 +1,8 @@
 package cn.cps.springbootexample.service;
 
-import cn.cps.springbootexample.entity.user.to.UserTO;
-import cn.cps.springbootexample.entity.user.vo.UserVO;
+import cn.cps.springbootexample.entity.user.to.UserInfoTO;
+import cn.cps.springbootexample.entity.user.to.UserLoginTO;
+import cn.cps.springbootexample.entity.user.vo.UserInfoVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
@@ -11,8 +12,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 public interface UserService{
 
-    UserVO getUserById(UserTO userDTO);
+    UserInfoVO getUserById(UserInfoTO userInfoTO);
 
-    IPage<UserVO> getUserList(UserTO userDTO);
+    IPage<UserInfoVO> getUserList(UserInfoTO userInfoTO);
+
+    UserInfoVO userLogin(UserLoginTO userLoginTO);
 
 }

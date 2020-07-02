@@ -1,12 +1,11 @@
 package cn.cps.springbootexample.dao;
 
 import cn.cps.springbootexample.entity.user.User;
-import cn.cps.springbootexample.entity.user.to.UserTO;
-import cn.cps.springbootexample.entity.user.vo.UserVO;
+import cn.cps.springbootexample.entity.user.to.UserInfoTO;
+import cn.cps.springbootexample.entity.user.vo.UserInfoVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Param;
 
 /**
  * @Author: Cai Peishen
@@ -15,6 +14,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-    IPage<UserVO> getUserList(Page<UserVO> userVOPage,UserTO userTO);
+    IPage<UserInfoVO> getUserList(Page<UserInfoVO> userInfoVOPage, UserInfoTO userInfoTO);
 
 }

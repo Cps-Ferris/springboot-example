@@ -24,7 +24,7 @@ public class Role implements Serializable {
 
     //Mybatis-Plus主键类型
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String roleName;
 

@@ -22,11 +22,11 @@ public class UserRole {
 
     //Mybatis-Plus主键类型
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
-    private Integer userId;
+    private Long userId;
 
-    private Integer roleId;
+    private Long roleId;
 
     private Integer isDelete;
 
@@ -34,4 +34,15 @@ public class UserRole {
 
     private Date updateTime;
 
+    @Override
+    public String toString() {
+        return "UserRole{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", roleId=" + roleId +
+                ", isDelete=" + isDelete +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }

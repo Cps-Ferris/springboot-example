@@ -27,7 +27,7 @@ public class User implements Serializable {
 
     //Mybatis-Plus主键类型
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     private String username;
 
@@ -41,4 +41,16 @@ public class User implements Serializable {
 
     private Date updateTime;
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", gender=" + gender +
+                ", isDelete=" + isDelete +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }
