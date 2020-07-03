@@ -10,7 +10,7 @@
         inner join `role` r on ur.role_id = r.id
         <where>
             <if test="userInfoTO.username != null and userInfoTO.username != ''">
-                u.username = #{userInfoTO.username}
+                u.username like CONCAT('%',#{userInfoTO.username},'%')
             </if>
         </where>
     </select>
