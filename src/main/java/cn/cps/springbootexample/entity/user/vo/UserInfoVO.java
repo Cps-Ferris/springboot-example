@@ -1,13 +1,10 @@
 package cn.cps.springbootexample.entity.user.vo;
 
-import cn.cps.springbootexample.entity.role.Role;
 import cn.cps.springbootexample.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author _Cps

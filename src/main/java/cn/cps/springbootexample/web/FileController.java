@@ -22,9 +22,9 @@ import java.io.IOException;
 /**
  * 文件管理
  */
-@Api(tags = "文件管理")
 @RestController
 @RequestMapping("/file")
+@Api(tags = "文件管理")
 public class FileController {
 
 	@Value("${web.upload-path}")

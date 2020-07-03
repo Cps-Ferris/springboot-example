@@ -14,15 +14,15 @@ import java.io.Serializable;
  * @Description: 用户登录 条件 TO实体类(前端到后台)
  */
 @Data
-@ApiModel
+@ApiModel("UserLoginTO 用户登录参数")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginTO implements Serializable {
 
-    @ApiModelProperty(value = "用户姓名")
+    @ApiModelProperty(value = "用户姓名", position = 1)
     private String username;
 
-    @ApiModelProperty(value = "用户密码")
+    @ApiModelProperty(value = "用户密码", position = 2)
     private String password;
 
     @Override

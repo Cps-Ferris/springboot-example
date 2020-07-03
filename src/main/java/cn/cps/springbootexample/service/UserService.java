@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  */
 public interface UserService{
 
-    UserInfoVO getUserById(UserInfoTO userInfoTO);
+    UserInfoVO getUserById(Long userId);
 
     IPage<UserInfoVO> getUserList(UserInfoTO userInfoTO);
 

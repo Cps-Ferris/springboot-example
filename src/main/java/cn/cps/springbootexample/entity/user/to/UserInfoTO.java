@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author _Cps
@@ -15,21 +14,21 @@ import java.util.Date;
  * @Description: 用户信息 查询条件 TO实体类(前端到后台)
  */
 @Data
-@ApiModel
+@ApiModel("UserInfoTO 用户信息参数")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoTO implements Serializable{
 
-    @ApiModelProperty(value = "当前页")
+    @ApiModelProperty(value = "当前页", example = "1", position = 1)
     private Long current;
 
-    @ApiModelProperty(value = "页容量")
+    @ApiModelProperty(value = "页容量", example = "3", position = 2)
     private Long pageSize;
 
-    @ApiModelProperty(value = "用户ID")
+    @ApiModelProperty(value = "用户ID", position = 3)
     private Long id;
 
-    @ApiModelProperty(value = "用户名")
+    @ApiModelProperty(value = "用户名", position = 4)
     private String username;
 
     @Override

@@ -13,10 +13,7 @@ import cn.cps.springbootexample.utils.TokenUtils;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,9 +31,9 @@ import java.util.concurrent.TimeUnit;
  * @Description: 用户接口Controller
  */
 @Slf4j
-@Api(tags="用户接口API")
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户管理")
 public class UserController {
 
     @Resource
@@ -46,16 +43,38 @@ public class UserController {
     private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping("/getUserById")
-    @ApiOperation(value="根据ID查询用户信息 - BaseMapper自带方法")
+    @ApiOperation(value="1.根据ID查询用户信息 - BaseMapper自带方法")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "id", required = true, value = "用户ID"),
+            @ApiImplicitParam(paramType = "query",name = "userId", dataType = "Long", required = true, value = "用户ID"),
     })
-    public Object getUserById(@RequestBody UserInfoTO userInfoTO){
-        log.info("/getUserById，参数为{}", userInfoTO.toString());
-        if(userInfoTO == null || userInfoTO.getId() == null){
+    public Object getUserById(Long userId){
+        log.info("/getUserById，参数为{}", userId);
+        if(StringUtils.isEmpty(userId)){
             return R.genFailResult("请输入完整参数...");
         };
-        UserInfoVO userInfoVO = userService.getUserById(userInfoTO);
+        UserInfoVO userInfoVO = userService.getUserById(userId);
+        return R.genSuccessResult(userInfoVO);
+    }
+
+
+    /**
+     * 当我们多个接口 公用一个对象当参数时，我们无法区分 各个接口对应的参数
+     * 这时我们可以使用 @ApiImplicitParam 仅仅是为了在swagger文档中 提示那些参数是需要输入的
+     * 在swagger的@ApiImplicitParam中输入数据 发送请求 后台并不处理；因为我们后台使用的对象接受 仍采用类型为对象的参数
+     * @param userInfoTO
+     * @return
+     */
+    @PostMapping("/getUserByIdPlus")
+    @ApiOperation(value="2.根据ID查询用户信息 - BaseMapper自带方法 - getUserByIdPlus")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query",name = "userId", dataType = "Long", required = true, value = "用户ID"),
+    })
+    public Object getUserByIdPlus(@RequestBody UserInfoTO userInfoTO){
+        log.info("/getUserById，参数为{}", userInfoTO.toString());
+        if(StringUtils.isEmpty(userInfoTO) || StringUtils.isEmpty(userInfoTO.getId())){
+            return R.genFailResult("请输入完整参数...");
+        };
+        UserInfoVO userInfoVO = userService.getUserById(userInfoTO.getId());
         return R.genSuccessResult(userInfoVO);
     }
 
@@ -67,11 +86,11 @@ public class UserController {
      * @return
      */
     @PostMapping("/getUserList")
-    @ApiOperation(value="查询每个用户、角色 信息 - 自定义SQL查询并分页")
+    @ApiOperation(value="3.查询每个用户及角色 信息 - 自定义SQL查询并分页")
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "current",  required = true, value = "当前页"),
-            @ApiImplicitParam(paramType = "query", name = "pageSize", required = true, value = "页容量"),
-            @ApiImplicitParam(paramType = "query", name = "username", required = false, value = "用户名")
+            @ApiImplicitParam(paramType = "query", name = "current",  dataType = "Long",  required = true, value = "当前页"),
+            @ApiImplicitParam(paramType = "query", name = "pageSize", dataType = "Long", required = true, value = "页容量"),
+            @ApiImplicitParam(paramType = "query", name = "username", dataType = "String", required = false, value = "用户名")
     })
     public Object getUserList(@RequestBody UserInfoTO userInfoTO){
         log.info("/getUserList，参数为{}", userInfoTO.toString());
@@ -90,11 +109,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/userLogin")
-    @ApiOperation(value="用户登录同时返回Token - QueryWrapper定义查询条件")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", name = "username", required = true, value = "用户名"),
-            @ApiImplicitParam(paramType = "query", name = "password", required = true, value = "用户密码")
-    })
+    @ApiOperation(value="4.用户登录同时返回Token - QueryWrapper定义查询条件")
     public Object userLogin(@RequestBody UserLoginTO userLoginTO) throws JsonProcessingException {
         log.info("/userLogin，参数为{}", userLoginTO.toString());
 
@@ -133,8 +148,8 @@ public class UserController {
      */
     @Token
     @PostMapping("/getUserByToken")
-    @ApiOperation(value="验证Token并返回用户信息")
-    @ApiImplicitParam(paramType = "header", name = "token", required = true, value = "Token")
+    @ApiOperation(value="5.验证Token并返回用户信息")
+    @ApiImplicitParam(paramType = "header", name = "token", dataType = "String", required = true, value = "Token值")
     public Object getUserByToken(){
         UserInfoVO userInfoVO = UserContext.getUserInfoVO();
         return R.genSuccessResult(userInfoVO);
@@ -147,8 +162,8 @@ public class UserController {
      * @param request
      * @return
      */
-    @ApiOperation(value="token校验失败跳转接口")
     @PostMapping("/returnLogin")
+    @ApiOperation(value="6.token校验失败跳转接口")
     public Object returnLogin(HttpServletRequest request) {
         String token_error = (String) request.getAttribute("token_error");
         log.error("tokenIptor校验失败跳转接口.{}",token_error);

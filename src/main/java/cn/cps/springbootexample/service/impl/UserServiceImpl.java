@@ -30,10 +30,10 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserInfoVO getUserById(UserInfoTO userInfoTO) {
+    public UserInfoVO getUserById(Long userId) {
 
         //使用Mybatis-Plus自带方法
-        User user = userMapper.selectById(userInfoTO);
+        User user = userMapper.selectById(userId);
 
         //为空直接返回
         if(user == null){

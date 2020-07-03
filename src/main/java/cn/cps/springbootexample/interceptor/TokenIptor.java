@@ -70,9 +70,7 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 						UserInfoVO userInfoVO = objectMapper.readValue(content, UserInfoVO.class);
 
 						//查询数据库 验证用户信息
-						UserInfoTO userInfoTO = new UserInfoTO();
-						userInfoTO.setId(userInfoVO.getId());
-						userInfoVO = userService.getUserById(userInfoTO);
+						userInfoVO = userService.getUserById(userInfoVO.getId());
 
 						if(StringUtils.isEmpty(userInfoVO)) {
 							logger.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
@@ -84,7 +82,7 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 
 						//设置用户信息(本次线程中)
 						UserContext.setToken(token);
-						UserContext.setUserId(userInfoTO.getCurrent());
+						UserContext.setUserId(userInfoVO.getId());
 						UserContext.setUserInfoVO(userInfoVO);
 
 					}
