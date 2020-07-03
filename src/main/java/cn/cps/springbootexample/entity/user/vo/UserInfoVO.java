@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserInfoVO extends User {
 
+    private Long userId;
+
     private Long roleId;
 
     private String roleName;
@@ -25,7 +27,8 @@ public class UserInfoVO extends User {
     @Override
     public String toString() {
         return "UserInfoVO{" +
-                "roleId=" + roleId +
+                "userId=" + userId +
+                ", roleId=" + roleId +
                 ", roleName='" + roleName + '\'' +
                 ", genderName='" + genderName + '\'' +
                 '}';

@@ -53,7 +53,6 @@ public class UserServiceImpl implements UserService {
 
         //组装分页信息
         Page<UserInfoVO> userInfoVOPage = new Page<UserInfoVO>(userInfoTO.getCurrent(), userInfoTO.getPageSize());
-        userInfoVOPage.setAsc("id");
 
         //调用查询方法
         IPage<UserInfoVO> userVOIPage = userMapper.getUserList(userInfoVOPage, userInfoTO);
@@ -73,6 +72,11 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("username",userLoginTO.getUsername());
         queryWrapper.eq("password",userLoginTO.getPassword());
         User user = userMapper.selectOne(queryWrapper);
+
+        //为空直接返回
+        if(user == null){
+            return null;
+        }
 
         //将user的数据复制一份到userInfoVO中
         UserInfoVO userInfoVO = new UserInfoVO();

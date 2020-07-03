@@ -52,7 +52,11 @@ public class UserController {
         if(StringUtils.isEmpty(userId)){
             return R.genFailResult("请输入完整参数...");
         };
+        //查询用户信息
         UserInfoVO userInfoVO = userService.getUserById(userId);
+        if(userInfoVO == null){
+            return R.genFailResult("用户信息不存在...");
+        }
         return R.genSuccessResult(userInfoVO);
     }
 
@@ -74,7 +78,11 @@ public class UserController {
         if(StringUtils.isEmpty(userInfoTO) || StringUtils.isEmpty(userInfoTO.getId())){
             return R.genFailResult("请输入完整参数...");
         };
+        //查询用户信息
         UserInfoVO userInfoVO = userService.getUserById(userInfoTO.getId());
+        if(userInfoVO == null){
+            return R.genFailResult("用户信息不存在...");
+        }
         return R.genSuccessResult(userInfoVO);
     }
 
@@ -147,7 +155,7 @@ public class UserController {
      * @return
      */
     @Token
-    @PostMapping("/getUserByToken")
+    @PostMapping("/checkToken")
     @ApiOperation(value="5.验证Token并返回用户信息")
     @ApiImplicitParam(paramType = "header", name = "token", dataType = "String", required = true, value = "Token值")
     public Object getUserByToken(){
@@ -163,7 +171,6 @@ public class UserController {
      * @return
      */
     @PostMapping("/returnLogin")
-    @ApiOperation(value="6.token校验失败跳转接口")
     public Object returnLogin(HttpServletRequest request) {
         String token_error = (String) request.getAttribute("token_error");
         log.error("tokenIptor校验失败跳转接口.{}",token_error);

@@ -53,7 +53,7 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 				// 方法上有注解标记，且为true，则重定向到检查Token的控制器中进行Token的验证
 				if (tokenAnt != null) {
 					String token = request.getHeader("token"); // Token
-					logger.info("Token={}",token);
+					logger.info("token={}",token);
 					if (!StringUtils.isEmpty(token)) {
 
 						//查询Redis
@@ -76,7 +76,6 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 							logger.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
 							request.setAttribute("token_error", "根据token 在数据库中查询不到用户信息");
 							request.getRequestDispatcher("/user/returnLogin").forward(request, response);
-							R.genFailResult("根据TOken查询不到用户信息");
 							return false;
 						}
 
