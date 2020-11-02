@@ -1,6 +1,7 @@
 package cn.cps.springbootexample.web;
 
 import cn.cps.springbootexample.annotation.Token;
+import cn.cps.springbootexample.annotation.WebLog;
 import cn.cps.springbootexample.context.UserContext;
 import cn.cps.springbootexample.core.R;
 import cn.cps.springbootexample.core.ResultCode;
@@ -42,6 +43,7 @@ public class UserController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @WebLog(description = "WebLog----->根据ID查询用户信息->BaseMapper自带方法")
     @PostMapping("/getUserById")
     @ApiOperation(value="1.根据ID查询用户信息 - BaseMapper自带方法")
     @ApiImplicitParams({
@@ -69,6 +71,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/getUserByIdPlus")
+    @WebLog(description = "WebLog----->根据ID查询用户信息->getUserByIdPlus")
     @ApiOperation(value="2.根据ID查询用户信息 - BaseMapper自带方法 - getUserByIdPlus")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query",name = "userId", dataType = "Long", required = true, value = "用户ID"),
@@ -94,6 +97,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/getUserList")
+    @WebLog(description = "WebLog----->查询每个用户及角色")
     @ApiOperation(value="3.查询每个用户及角色 信息 - 自定义SQL查询并分页")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", name = "current",  dataType = "Long",  required = true, value = "当前页"),
@@ -118,6 +122,7 @@ public class UserController {
      */
     @PostMapping("/userLogin")
     @ApiOperation(value="4.用户登录同时返回Token - QueryWrapper定义查询条件")
+    @WebLog(description = "WebLog----->用户登录同时返回Token")
     public Object userLogin(@RequestBody UserLoginTO userLoginTO) throws JsonProcessingException {
         log.info("/userLogin，参数为{}", userLoginTO.toString());
 
@@ -157,6 +162,7 @@ public class UserController {
     @Token
     @PostMapping("/checkToken")
     @ApiOperation(value="5.验证Token并返回用户信息")
+    @WebLog(description = "WebLog----->验证Token并返回用户信息")
     @ApiImplicitParam(paramType = "header", name = "token", dataType = "String", required = true, value = "Token值")
     public Object getUserByToken(){
         UserInfoVO userInfoVO = UserContext.getUserInfoVO();
@@ -171,6 +177,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/returnLogin")
+    @WebLog(description = "WebLog----->token校验失败跳转接口")
     public Object returnLogin(HttpServletRequest request) {
         String token_error = (String) request.getAttribute("token_error");
         log.error("tokenIptor校验失败跳转接口.{}",token_error);
