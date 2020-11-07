@@ -10,13 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiOperation;
-import org.omg.PortableInterceptor.Interceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.HandlerMethod;
@@ -45,12 +42,12 @@ import java.util.TimeZone;
  * @Date: 2020/6/29 11:07
  * @Description: Spring MVC 配置
  */
+@Slf4j
 @Configuration
 @EnableSwagger2
 public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
 
 
     //文件上传路径
@@ -147,7 +144,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         try {
             response.getWriter().write(objectMapper.writeValueAsString(result));
         } catch (IOException ex) {
-            logger.error(ex.getMessage());
+            log.error(ex.getMessage());
         }
     }
 
@@ -160,7 +157,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                 Result result = new Result();
                 if (e instanceof ServiceException) {//业务失败的异常，如“账号或密码错误”
                     result.setCode(ResultCode.FAIL).setMessage(e.getMessage());
-                    logger.info(e.getMessage());
+                    log.info(e.getMessage());
                 } else if (e instanceof NoHandlerFoundException) {
                     result.setCode(ResultCode.NOT_FOUND).setMessage("接口 [" + request.getRequestURI() + "] 不存在");
                 } else if (e instanceof ServletException) {
@@ -178,7 +175,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                     } else {
                         message = e.getMessage();
                     }
-                    logger.error(message, e);
+                    log.error(message, e);
                 }
                 responseResult(response, result);
                 return new ModelAndView();
