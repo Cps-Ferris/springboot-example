@@ -1,10 +1,13 @@
 package cn.cps.springbootexample.web;
 
+import cn.cps.springbootexample.annotation.ResponseResult;
 import cn.cps.springbootexample.annotation.Token;
 import cn.cps.springbootexample.annotation.WebLog;
 import cn.cps.springbootexample.context.UserContext;
+import cn.cps.springbootexample.core.ErrorResult;
 import cn.cps.springbootexample.core.R;
 import cn.cps.springbootexample.core.ResultCode;
+import cn.cps.springbootexample.entity.user.User;
 import cn.cps.springbootexample.entity.user.to.UserLoginTO;
 import cn.cps.springbootexample.entity.user.to.UserInfoTO;
 import cn.cps.springbootexample.entity.user.vo.UserInfoVO;
@@ -184,5 +187,18 @@ public class UserController {
         return R.genFailResult(token_error);
     }
 
+
+    @ResponseResult
+    @GetMapping("/testAnnotaionResult")
+    public Object testAnnotaionResult(Long id){
+        if(id == null || id == 0){
+            ErrorResult errorResult = new ErrorResult();
+            errorResult.setErrorMessage("请输入正确编号...");
+            return errorResult;
+        }
+        User user = new User();
+        user.setId(id);
+        return user;
+    }
 
 }

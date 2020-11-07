@@ -7,6 +7,7 @@ import cn.cps.springbootexample.entity.user.to.UserInfoTO;
 import cn.cps.springbootexample.entity.user.vo.UserInfoVO;
 import cn.cps.springbootexample.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,8 @@ import java.lang.reflect.Method;
  * @Date: 2020/7/2 10:21
  * @Description: 定义Token拦截器
  */
+@Slf4j
 public class TokenIptor extends HandlerInterceptorAdapter {
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserService userService;
@@ -53,14 +53,14 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 				// 方法上有注解标记，且为true，则重定向到检查Token的控制器中进行Token的验证
 				if (tokenAnt != null) {
 					String token = request.getHeader("token"); // Token
-					logger.info("token={}",token);
+					log.info("token={}",token);
 					if (!StringUtils.isEmpty(token)) {
 
 						//查询Redis
 						String content = stringRedisTemplate.opsForValue().get(token);
 
 						if(StringUtils.isEmpty(content)){
-							logger.error("token已失效或者为空");
+							log.error("token已失效或者为空");
 							request.setAttribute("token_error", "token已失效或者为空....");
 							request.getRequestDispatcher("/user/returnLogin").forward(request, response);
 						}
@@ -73,7 +73,7 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 						userInfoVO = userService.getUserById(userInfoVO.getId());
 
 						if(StringUtils.isEmpty(userInfoVO)) {
-							logger.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
+							log.error("根据TOken查询不到用户信息，Token{}，userInfoVO",userInfoVO.toString());
 							request.setAttribute("token_error", "根据token 在数据库中查询不到用户信息");
 							request.getRequestDispatcher("/user/returnLogin").forward(request, response);
 							return false;
@@ -89,11 +89,11 @@ public class TokenIptor extends HandlerInterceptorAdapter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("----- TokenIptor Exception -----", e);
+			log.error("----- TokenIptor Exception -----", e);
 			return false;
 		}
 
-		logger.info("----- TokenIptor Pass！-----");
+		log.info("----- TokenIptor Pass！-----");
 		return true;
 	}
 

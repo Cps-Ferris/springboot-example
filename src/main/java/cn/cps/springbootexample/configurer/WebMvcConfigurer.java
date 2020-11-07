@@ -3,6 +3,7 @@ package cn.cps.springbootexample.configurer;
 import cn.cps.springbootexample.core.Result;
 import cn.cps.springbootexample.core.ResultCode;
 import cn.cps.springbootexample.core.ServiceException;
+import cn.cps.springbootexample.interceptor.ResultInterceptor;
 import cn.cps.springbootexample.interceptor.TokenIptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.omg.PortableInterceptor.Interceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +47,12 @@ import java.util.TimeZone;
  * @Date: 2020/6/29 11:07
  * @Description: Spring MVC 配置
  */
+@Slf4j
 @Configuration
 @EnableSwagger2
 public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Logger logger = LoggerFactory.getLogger(WebMvcConfigurer.class);
 
 
     //文件上传路径
@@ -63,11 +65,22 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         return new TokenIptor();
     }
 
+    //注入自己的封装结果拦截器
+    @Bean
+    ResultInterceptor resultInterceptor() {
+        return new ResultInterceptor();
+    }
+
+
     //配置上拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //引用上面注入的的拦截器
+        //引用上面注入的的拦截器 -> ToTokenIptor
         registry.addInterceptor(tokenIptor())
+                .addPathPatterns("/**");//.excludePathPatterns("/error/page/**");
+
+        //引用上面注入的的拦截器 -> ResultInterceptor
+        registry.addInterceptor(resultInterceptor())
                 .addPathPatterns("/**");//.excludePathPatterns("/error/page/**");
     }
 
@@ -147,7 +160,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
         try {
             response.getWriter().write(objectMapper.writeValueAsString(result));
         } catch (IOException ex) {
-            logger.error(ex.getMessage());
+            log.error(ex.getMessage());
         }
     }
 
@@ -160,7 +173,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                 Result result = new Result();
                 if (e instanceof ServiceException) {//业务失败的异常，如“账号或密码错误”
                     result.setCode(ResultCode.FAIL).setMessage(e.getMessage());
-                    logger.info(e.getMessage());
+                    log.info(e.getMessage());
                 } else if (e instanceof NoHandlerFoundException) {
                     result.setCode(ResultCode.NOT_FOUND).setMessage("接口 [" + request.getRequestURI() + "] 不存在");
                 } else if (e instanceof ServletException) {
@@ -178,7 +191,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport   {
                     } else {
                         message = e.getMessage();
                     }
-                    logger.error(message, e);
+                    log.error(message, e);
                 }
                 responseResult(response, result);
                 return new ModelAndView();
